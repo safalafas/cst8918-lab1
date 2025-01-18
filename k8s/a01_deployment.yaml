@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-app-deployment
+  namespace: cst8918
+  labels:
+    app: weather-app
+spec:
+  selector:
+    matchLabels:
+      app: weather-app
+  template:
+    metadata:
+      labels:
+        app: weather-app
+    spec:
+      containers:
+        - name: weather-app-container
+          image: safalafas/cst8918-lab1:latest
+          resources:
+            limits:
+              memory: '128Mi'
+              cpu: '500m'
+          ports:
+            - containerPort: 8080
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: WEATHER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: weather
+                  key: api-key
